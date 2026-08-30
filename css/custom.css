@@ -202,7 +202,7 @@ a { text-decoration: none; }
 .navbar-nexora {
   padding: 1.25rem 0;
   transition: all 0.3s ease;
-  background: rgba(255, 255, 255, 0.0);
+  background: rgba(255, 255, 255, 0.96);
 }
 
 .navbar-nexora.scrolled {
@@ -210,6 +210,10 @@ a { text-decoration: none; }
   background: rgba(255, 255, 255, 0.92);
   backdrop-filter: blur(12px);
   box-shadow: var(--n-shadow-sm);
+}
+
+body.page-header-blue .navbar-nexora:not(.scrolled) {
+  background: rgba(8, 29, 78, 0.96);
 }
 
 .navbar-brand-custom {
@@ -282,6 +286,34 @@ body.page-header-blue .navbar-nexora.scrolled .navbar-brand-custom span {
 .navbar-toggler-custom.active .bar:nth-child(2) { opacity: 0; }
 .navbar-toggler-custom.active .bar:nth-child(3) {
   transform: translateY(-6px) rotate(-45deg);
+}
+
+@media (max-width: 991.98px) {
+  .navbar-nexora {
+    background: rgba(255, 255, 255, 0.96);
+    backdrop-filter: blur(12px);
+    box-shadow: var(--n-shadow-sm);
+  }
+
+  .navbar-nexora .navbar-collapse {
+    background: rgba(255, 255, 255, 0.98);
+    border-radius: 1rem;
+    padding: 0.9rem 1rem;
+    margin-top: 0.75rem;
+    box-shadow: var(--n-shadow-sm);
+    border: 1px solid rgba(15, 15, 64, 0.08);
+  }
+
+  .navbar-nexora .nav-link {
+    color: var(--n-navy) !important;
+    padding: 0.7rem 0.9rem !important;
+  }
+
+  .navbar-nexora .nav-link:hover,
+  .navbar-nexora .nav-link.active {
+    color: var(--n-navy) !important;
+    background: var(--n-bg-alt);
+  }
 }
 
 /* =====================================================
