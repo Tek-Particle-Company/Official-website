@@ -83,29 +83,96 @@ document.addEventListener('DOMContentLoaded', function () {
 
   /* ---------- Bootstrap form validation UI ---------- */
   document.querySelectorAll('.needs-validation').forEach(form => {
-    form.addEventListener('submit', function (e) {
+    form.addEventListener('submit', async function (e) {
       if (!form.checkValidity()) {
         e.preventDefault();
         e.stopPropagation();
-      } else {
-        e.preventDefault();
-        const btn = form.querySelector('button[type="submit"]');
+        form.classList.add('was-validated');
+        return;
+      }
+
+      e.preventDefault();
+
+      const serviceSelect = form.querySelector('#service');
+      const emailInput = form.querySelector('#workEmail');
+      const mobileInput = form.querySelector('#mobileNumber');
+      const service = serviceSelect ? serviceSelect.value.trim() : '';
+      const email = emailInput ? emailInput.value.trim() : '';
+      const mobile = mobileInput ? mobileInput.value.trim() : '';
+
+      const subjectField = form.querySelector('input[name="_subject"]');
+      if (subjectField) {
+        subjectField.value = service ? `Service Needed: ${service}` : 'Service Needed';
+      }
+
+      const replyToField = form.querySelector('input[name="_replyto"]');
+      if (replyToField && email) {
+        replyToField.value = email;
+      }
+
+      const mobileField = form.querySelector('input[name="mobileNumber"]');
+      if (mobileField && mobile) {
+        mobileField.value = mobile;
+      }
+
+      const btn = form.querySelector('button[type="submit"]');
+      const originalText = btn ? btn.innerHTML : '';
+
+      if (btn) {
+        btn.disabled = true;
+        btn.innerHTML = 'Sending...';
+      }
+
+      try {
+        const payload = new FormData(form);
+        const response = await fetch(form.action, {
+          method: form.method || 'POST',
+          body: payload,
+          headers: {
+            'Accept': 'application/json'
+          }
+        });
+
+        const result = await response.json().catch(() => ({}));
+
+        if (!response.ok || result.success === false) {
+          const message = result.message || 'The form could not be submitted right now.';
+          if (btn) {
+            btn.innerHTML = 'Action needed';
+          }
+          window.alert(message + ' Check business@tekparticle.online for the activation email from FormSubmit, then click the activation link and try again.');
+          throw new Error(message);
+        }
+
         if (btn) {
-          const original = btn.innerHTML;
-          btn.innerHTML = 'Sending...';
-          btn.disabled = true;
+          btn.innerHTML = 'Message sent';
+        }
+
+        form.classList.remove('was-validated');
+        form.reset();
+
+        const successBox = document.createElement('div');
+        successBox.className = 'alert alert-success mt-3 mb-0';
+        successBox.textContent = 'Your message has been sent successfully. We will get back to you soon.';
+
+        const existingAlert = form.parentNode.querySelector('.form-success-message');
+        if (existingAlert) existingAlert.remove();
+
+        successBox.classList.add('form-success-message');
+        form.parentNode.appendChild(successBox);
+      } catch (error) {
+        if (btn) {
+          btn.innerHTML = 'Send failed';
+        }
+        console.error('Email send failed:', error);
+      } finally {
+        if (btn) {
           setTimeout(() => {
-            btn.innerHTML = 'Message sent ✓';
-            setTimeout(() => {
-              btn.innerHTML = original;
-              btn.disabled = false;
-              form.reset();
-              form.classList.remove('was-validated');
-            }, 2200);
-          }, 1000);
+            btn.innerHTML = originalText;
+            btn.disabled = false;
+          }, 2200);
         }
       }
-      form.classList.add('was-validated');
     }, false);
   });
 
