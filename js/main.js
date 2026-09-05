@@ -93,7 +93,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
       e.preventDefault();
 
-      const serviceSelect = form.querySelector('#service');
+      const serviceSelect = form.querySelector('#service') || form.querySelector('#topic');
       const emailInput = form.querySelector('#workEmail');
       const mobileInput = form.querySelector('#mobileNumber');
       const service = serviceSelect ? serviceSelect.value.trim() : '';
@@ -102,7 +102,8 @@ document.addEventListener('DOMContentLoaded', function () {
 
       const subjectField = form.querySelector('input[name="_subject"]');
       if (subjectField) {
-        subjectField.value = service ? `Service Needed: ${service}` : 'Service Needed';
+        const baseSubject = subjectField.defaultValue || subjectField.value || 'New Inquiry';
+        subjectField.value = service ? `${baseSubject}: ${service}` : baseSubject;
       }
 
       const replyToField = form.querySelector('input[name="_replyto"]');
